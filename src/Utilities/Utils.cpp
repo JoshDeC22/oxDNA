@@ -242,6 +242,31 @@ std::vector<number> split_to_numbers(const std::string &str, const std::string &
 	return output;
 }
 
+std::vector<unsigned int> split_to_uint(const std::string &str, const std::string &delims) {
+    std::vector<unsigned int> output;
+    output.reserve(15);
+
+    const char *ptr = str.c_str();
+    while (ptr) {
+        auto base = ptr;
+        ptr = std::strpbrk(ptr, delims.c_str());
+        if (ptr) {
+            if (ptr - base) {
+                output.emplace_back(uint_lexical_cast(std::string(base, ptr - base)));
+            }
+            ptr++;
+        }
+        else {
+            std::string remainder(base);
+            if (remainder.size() > 0) {
+                output.emplace_back(uint_lexical_cast(remainder));
+            }
+        }
+    }
+
+    return output;
+}
+
 std::string sformat(std::string fmt, ...) {
 	va_list ap;
 	va_start(ap, fmt);

@@ -63,6 +63,8 @@ std::vector<std::string> split(const std::string &s, char delim = ' ');
 // this is a very fast split function that fills a vector of numbers. It is mainly used by the configuration parser
 std::vector<number> split_to_numbers(const std::string &str, const std::string &delims);
 
+std::vector<unsigned int> split_to_uint(const std::string &str, const std::string &delims);
+
 inline number lexical_cast(const std::string &source) {
 	double result;
 
@@ -71,6 +73,10 @@ inline number lexical_cast(const std::string &source) {
 	}
 
 	return result;
+}
+
+inline unsigned int uint_lexical_cast(const std::string &source) {
+    return static_cast<unsigned int>(std::stoul(source));
 }
 
 // trim from both ends, it works like Python's own trim
