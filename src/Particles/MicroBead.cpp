@@ -9,17 +9,14 @@
 #include "../Utilities/Utils.h"
 #include "../Utilities/oxDNAException.h"
 
-void MicroBead::add_site(const LR_vector &position, unsigned int target_nucleotide) {
-    LR_vector local_position = orientationT * (position - pos);
+void MicroBead::add_site(const LR_vector &position, unsigned int target_nucleotide) { LR_vector local_position = orientationT * (position - pos);
 
     // Check whether the tether site lies on the surface of the micro bead.
     if (local_position.module() - radius > tolerance) {
         throw oxDNAException("Error in micro bead %zu: the given tether position (%f, %f, %f) does not lie on the surface of the micro bead.", id, position.x, position.y, position.z);
     }
 
-    InteractionSite site;
-    site.local_position = local_position;
-    site.target_nucleotide = target_nucleotide;
+    InteractionSite site = { local_position, target_nucleotide };
 
     sites.emplace_back(site);
 }
@@ -117,4 +114,18 @@ std::vector<LR_vector> MicroBead::get_rot_axes() const {
     }
 
     return global_rot;
+}
+
+MicroBead::AnchorResult MicroBead::get_anchor(unsigned int nucleotide_index) const {
+    bool attachment_exists = false;
+    LR_vector anchor;
+
+    for (size_t i = 0; i < int_centers.size(); i++) {
+        if (nucleotide_index == sites[i].target_nucleotide) {
+            attachment_exists = true;
+            anchor = int_centers[i] + pos;
+        }
+    }
+
+    return MicroBead::AnchorResult { anchor, attachment_exists };
 }

@@ -28,6 +28,11 @@ public:
         unsigned int target_nucleotide;
     };
 
+    struct AnchorResult {
+        LR_vector anchor;
+        bool attachment_exists;
+    };
+
     number radius;
     number anchor_stiffness;
     number rot_stiffness;
@@ -45,4 +50,6 @@ public:
     void set_positions() override;
 
     std::vector<LR_vector> get_rot_axes() const;
+
+    AnchorResult get_anchor(unsigned int nucleotide_index) const;
 };
