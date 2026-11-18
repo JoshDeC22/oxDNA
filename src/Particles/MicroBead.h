@@ -34,6 +34,7 @@ public:
     };
 
     number radius;
+    number surface_offset;
     number anchor_stiffness;
     number rot_stiffness;
     bool constrained;

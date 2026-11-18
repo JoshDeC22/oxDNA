@@ -12,7 +12,7 @@
 void MicroBead::add_site(const LR_vector &position, unsigned int target_nucleotide) { LR_vector local_position = orientationT * (position - pos);
 
     // Check whether the tether site lies on the surface of the micro bead.
-    if (local_position.module() - radius > tolerance) {
+    if (local_position.module() - radius - surface_offset > tolerance) {
         throw oxDNAException("Error in micro bead %zu: the given tether position (%f, %f, %f) does not lie on the surface of the micro bead.", id, position.x, position.y, position.z);
     }
 
@@ -39,6 +39,7 @@ void MicroBead::calc_rot_axes() {
 
 MicroBead::MicroBead(input_file &inp) : BaseParticle() {
     getInputNumber(&inp, "radius", &radius, 1);
+    getInputNumber(&inp, "offset", &surface_offset, 1);
     getInputNumber(&inp, "anchor_stiffness", &anchor_stiffness, 1);
     getInputNumber(&inp, "rotation_stiffness", &rot_stiffness, 1);
 
