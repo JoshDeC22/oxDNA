@@ -131,6 +131,91 @@ int TopologyParser::parse_old_topology(std::vector<BaseParticle *> &particles) {
 	return i;
 }
 
+int TopologyParser::parse_old_bead_topology(std::vector<BaseParticle *> &particles) {
+	std::ifstream topology(_filename, std::ios::in);
+	std::string line;
+	std::getline(topology, line);
+
+	char base[256];
+	int strand, i = 0;
+	while(topology.good()) {
+		std::getline(topology, line);
+		if(line.size() == 0 || line[0] == '#') {
+			continue;
+		}
+		if(i == N()) {
+			throw oxDNAException("Too many particles found in the topology file (should be %d), aborting", N());
+		}
+
+		int tmpn3, tmpn5;
+		int res = sscanf(line.c_str(), "%d %s %d %d", &strand, base, &tmpn3, &tmpn5);
+
+		if(res < 4) {
+			throw oxDNAException("Line %d of the topology file has an invalid syntax", i + 2);
+		}
+
+		BaseParticle *p = particles[i];
+
+		if(tmpn3 < 0) {
+			p->n3 = P_VIRTUAL;
+		}
+		else {
+			p->n3 = particles[tmpn3];
+		}
+		if(tmpn5 < 0) {
+			p->n5 = P_VIRTUAL;
+		}
+		else {
+			p->n5 = particles[tmpn5];
+		}
+
+		// store the strand id
+		// for a design inconsistency, in the topology file
+		// strand ids start from 1, not from 0
+		p->strand_id = strand - 1;
+
+		// the base can be either a char or an integer
+		if(strlen(base) == 1) {
+			p->type = Utils::decode_base(base[0]);
+			p->btype = Utils::decode_base(base[0]);
+		}
+		else {
+			int i_base = atoi(base);
+			if (i_base > 0 && i_base <= 4) {
+				p->type = i_base % 4;
+			}
+            else if (i_base > 4) {
+                p->type = B_B;
+            }
+			else {
+				p->type = 3 - ((3 - i_base) % 4);
+			}
+			p->btype = i_base;
+		}
+
+		if(p->type == P_INVALID) {
+			throw oxDNAException("Particle #%d in strand #%d contains a non valid base '%c'. Aborting", i, strand, base);
+		}
+		p->index = i;
+		i++;
+
+		// here we fill the affected vector
+		if(p->n3 != P_VIRTUAL) {
+			p->affected.push_back(ParticlePair(p->n3, p));
+		}
+
+		if(p->n5 != P_VIRTUAL) {
+			p->affected.push_back(ParticlePair(p, p->n5));
+		}
+	}
+
+	topology.close();
+
+	check_topology(particles);
+
+	return i;
+}
+
 void TopologyParser::parse_new_topology() {
 	std::ifstream topology(_filename, std::ios::in);
 	std::string line;

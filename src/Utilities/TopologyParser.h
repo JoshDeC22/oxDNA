@@ -30,6 +30,7 @@ public:
 	bool is_new_topology();
 
 	int parse_old_topology(std::vector<BaseParticle *> &particles);
+    int parse_old_bead_topology(std::vector<BaseParticle *> &particles);
 	void parse_new_topology();
 
 	void check_topology(std::vector<BaseParticle *> &particles);
