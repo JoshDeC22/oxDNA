@@ -57,6 +57,10 @@
 #define A_V (24)
 #define A_DUMMY (25)
 
+// Beads
+#define B_B (26)
+#define B_DUMMY (27)
+
 // TODO: this is the cutoff for considering a hydrogen bond "formed", but it should be
 // possible to set it from input file and not hard coded
 #define HB_CUTOFF (-0.1f)

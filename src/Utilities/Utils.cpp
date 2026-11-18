@@ -87,6 +87,18 @@ int decode_aa(char c) {
     }
 }
 
+int decode_bead(char c) {
+    c = toupper(c);
+    switch (c) {
+        case 'B':
+            return B_B;
+        case 'J':
+            return B_DUMMY;
+        default:
+            return P_INVALID;
+    }
+}
+
 char encode_aa(int b) {
     switch(b) {
         case A_A:
@@ -153,6 +165,17 @@ char encode_base(int b) {
 	}
 }
 
+char encode_bead(int b) {
+    switch (b) {
+        case B_B:
+            return 'B';
+        case B_DUMMY:
+            return 'J';
+        default:
+            return 'X';
+    }
+}
+
 std::vector<int> btypes_from_sequence(const std::string &sequence) {
 	std::vector<int> result;
 	bool open_parenthesis = false;
@@ -178,6 +201,47 @@ std::vector<int> btypes_from_sequence(const std::string &sequence) {
 			}
 			else {
 				int btype = Utils::decode_base(c);
+				if(btype == P_INVALID) {
+					throw oxDNAException("invalid base %c", c);
+				}
+				result.push_back(btype);
+			}
+		}
+	}
+
+	if(open_parenthesis) {
+		throw oxDNAException("missing closing parenthesis");
+	}
+
+	return result;
+}
+
+std::vector<int> btypes_from_bead_seq(const std::string &sequence) {
+	std::vector<int> result;
+	bool open_parenthesis = false;
+	std::string parenthesis_token;
+
+	for(char c : sequence) {
+		if(c == '(') {
+			open_parenthesis = true;
+			parenthesis_token.clear();
+			continue;
+		}
+		else if(c == ')') {
+			if(!open_parenthesis) {
+				throw oxDNAException("unbalanced parenthesis");
+			}
+			open_parenthesis = false;
+			int btype = std::atoi(parenthesis_token.c_str());
+			result.push_back(btype);
+		}
+		else {
+			if(open_parenthesis) {
+				parenthesis_token.push_back(c);
+			}
+			else {
+				int btype = Utils::decode_base(c);
+                btype = (btype == P_INVALID) ? decode_bead(c) : btype;
 				if(btype == P_INVALID) {
 					throw oxDNAException("invalid base %c", c);
 				}
