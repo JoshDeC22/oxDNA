@@ -36,6 +36,9 @@ char encode_base(int b);
 std::vector<int> btypes_from_sequence(const std::string &sequence);
 int decode_aa(char c); // Subho 
 char encode_aa(int b); // Subho
+int decode_bead(char c);
+char encode_bead(char c);
+std::vector<int> btypes_from_bead_seq(const std::string &sequence);
 
 number gaussian();
 
