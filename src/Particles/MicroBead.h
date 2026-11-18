@@ -11,6 +11,8 @@
  * @brief Represents a plastic bead commonly seen in optical tweezers experiments
 */
 
+#define EV_STIFF 100.0
+
 class MicroBead: public BaseParticle {
 protected:
     unsigned int id;
@@ -37,6 +39,7 @@ public:
     number surface_offset;
     number anchor_stiffness;
     number rot_stiffness;
+    number ev_stiffness;
     bool constrained;
 
     std::vector<InteractionSite> sites;

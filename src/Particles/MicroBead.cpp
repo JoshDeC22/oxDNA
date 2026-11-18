@@ -20,7 +20,6 @@ void MicroBead::add_site(const LR_vector &position, unsigned int target_nucleoti
 
     sites.emplace_back(site);
 }
-
 void MicroBead::calc_rot_axes() {
     if (constrained) {
         for (size_t i = 0; i < n_midpoints; i += 2) {
@@ -42,6 +41,9 @@ MicroBead::MicroBead(input_file &inp) : BaseParticle() {
     getInputNumber(&inp, "offset", &surface_offset, 1);
     getInputNumber(&inp, "anchor_stiffness", &anchor_stiffness, 1);
     getInputNumber(&inp, "rotation_stiffness", &rot_stiffness, 1);
+
+    ev_stiffness = EV_STIFF;
+    getInputNumber(&inp, "excluded_stiffness", &ev_stiffness, 1);
 
     getInputUInt(&inp, "id", &id, 1);
 
