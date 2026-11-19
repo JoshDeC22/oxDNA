@@ -19,8 +19,6 @@ protected:
     unsigned int n_midpoints;
     number tolerance = 1e-12;
 
-    std::vector<LR_vector> rot_axes;
-
     void add_site(const LR_vector &position, unsigned int target_nucleotide);
 
     void calc_rot_axes();
@@ -43,6 +41,7 @@ public:
     bool constrained;
 
     std::vector<InteractionSite> sites;
+    std::vector<LR_vector> rot_axes;
 
     MicroBead(input_file &inp);
     virtual ~MicroBead() = default;
@@ -52,8 +51,6 @@ public:
     }
 
     void set_positions() override;
-
-    std::vector<LR_vector> get_rot_axes() const;
 
     AnchorResult get_anchor(unsigned int nucleotide_index) const;
 };

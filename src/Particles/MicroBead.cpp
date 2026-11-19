@@ -103,22 +103,6 @@ void MicroBead::set_positions() {
     }
 }
 
-std::vector<LR_vector> MicroBead::get_rot_axes() const {
-    std::vector<LR_vector> global_rot;
-
-    if (!constrained) {
-        return global_rot;
-    }
-
-    global_rot.resize(rot_axes.size());
-
-    for (size_t i = 0; i < rot_axes.size(); i++) {
-        global_rot[i] = orientation * rot_axes[i];
-    }
-
-    return global_rot;
-}
-
 MicroBead::AnchorResult MicroBead::get_anchor(unsigned int nucleotide_index) const {
     bool attachment_exists = false;
     LR_vector anchor;
