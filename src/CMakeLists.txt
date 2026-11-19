@@ -121,6 +121,7 @@ SET(interactions_SOURCES
 	Interactions/LJInteraction.cpp
 	Interactions/DNAInteraction.cpp
 	Interactions/DNA2Interaction.cpp
+    Interactions/DNA2BeadInteraction.cpp
 	Interactions/DNA2SDInteraction.cpp
 	Interactions/DNA3Interaction.cpp
 	Interactions/DNAInteraction_relax.cpp
