@@ -90,27 +90,6 @@ std::vector<input_file> DNA2BeadInteraction::get_beadblocks() {
     return bead_blocks;
 }
 
-number DNA2BeadInteraction::potential(MicroBead *p, BaseParticle *q) {
-    MicroBead::AnchorResult result = p->get_anchor(q->index);
-
-    number energy = 0.0;
-
-    if (result.attachment_exists) {
-        LR_vector dr = q->pos - result.anchor;
-
-        energy += 0.5 * p->anchor_stiffness * dr.norm();
-    }
-
-    number r = (p->pos - q->pos).module();
-    number overlap = p->radius - r;
-
-    if (overlap > 0.0) {
-        energy += 0.5 * p->ev_stiffness * overlap * overlap;
-    }
-
-    return energy;
-}
-
 number DNA2BeadInteraction::dna_bead_interactions(MicroBead *p, BaseParticle *q, bool update_forces) {
     MicroBead::AnchorResult result = p->get_anchor(q->index);
 
@@ -135,7 +114,22 @@ number DNA2BeadInteraction::dna_bead_interactions(MicroBead *p, BaseParticle *q,
     }
 
     // Excluded volume
-    number r = (p->pos - q->pos).module();
+    LR_vector dr = q->pos - p->pos;
+    number r = dr.module();
+    number overlap = p->radius - r; 
+
+    if (overlap > 0.0 && r > 1e-12) {
+        energy += 0.5 * p->ev_stiffness * overlap * overlap;
+
+        if (update_forces) {
+            LR_vector F = dr * (p->ev_stiffness * overlap / r);
+
+            q->force += F;
+            p->force -= F;
+        }
+    }
+
+    return energy;
 }
 
 void DNA2BeadInteraction::get_settings(input_file &inp) {
@@ -252,4 +246,20 @@ void DNA2BeadInteraction::allocate_particles(std::vector<BaseParticle *> &partic
         input_file bead_block = bead_blocks[ind];
         particles[i] = new MicroBead(bead_block);
     }
+}
+
+number DNA2BeadInteraction::pair_interaction_nonbonded(BaseParticle *p, BaseParticle *q, bool compute_r, bool update_forces) {
+    number energy;
+
+    if (MicroBead* bead = dynamic_cast<MicroBead*>(p)) {
+        energy = dna_bead_interactions(bead, q, update_forces);
+    }
+    else if (MicroBead* bead2 = dynamic_cast<MicroBead*>(q)) {
+        energy = dna_bead_interactions(bead2, p, update_forces);
+    }
+    else {
+        energy = DNA2Interaction::pair_interaction_nonbonded(p, q, compute_r, update_forces);
+    }
+
+    return energy;
 }
