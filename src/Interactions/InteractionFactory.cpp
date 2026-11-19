@@ -13,6 +13,7 @@
 
 #include "LJInteraction.h"
 #include "DNAInteraction.h"
+#include "DNA2BeadInteraction.h"
 #include "DNA2Interaction.h"
 #include "DNA2SDInteraction.h"
 #include "DNA3Interaction.h"
@@ -70,6 +71,7 @@ InteractionPtr InteractionFactory::make_interaction(input_file &inp) {
 	else if(inter_type.compare("DNA3_nomesh") == 0) return std::make_shared<DNA3Interaction_nomesh>();
 	else if(inter_type.compare("DNA_relax") == 0) return std::make_shared<DNAInteraction_relax>();
 	else if(inter_type.compare("DNA2") == 0) return std::make_shared<DNA2Interaction>();
+	else if(inter_type.compare("DNA2Bead") == 0) return std::make_shared<DNA2BeadInteraction>();
 	else if(inter_type.compare("DNA2SD") == 0) return std::make_shared<DNA2SDInteraction>();
 	else if(inter_type.compare("RNA") == 0) return std::make_shared<RNAInteraction>();
 	else if(inter_type.compare("RNA2") == 0) return std::make_shared<RNA2Interaction>();
