@@ -206,6 +206,7 @@ SET(common_SOURCES
 	Particles/SpheroCylinder.cpp
 	Particles/Molecule.cpp
 	Particles/ANMParticle.cpp
+    Particles/MicroBead.cpp
 	Managers/SimManager.cpp
 	Utilities/OrderParameters.cpp
 	Utilities/Weights.cpp
